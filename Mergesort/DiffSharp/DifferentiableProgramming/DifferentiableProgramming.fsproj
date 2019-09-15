@@ -75,8 +75,8 @@
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
-    <None Include="ifwhile.fsx" />
     <None Include="mergesort.fsx" />
+    <None Include="mergesort_with_dv.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DiffSharp">
