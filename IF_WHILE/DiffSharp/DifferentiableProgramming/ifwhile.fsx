@@ -17,6 +17,8 @@ module DiffProgram=
     let df=diff f    
     
     let df0=df(D 0.0f)
+
+    printfn "%s" (df0.ToString())
     
     let rec fib(x :D)=
         if(x<=D 1.0f)
