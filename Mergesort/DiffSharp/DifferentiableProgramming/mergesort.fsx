@@ -2,46 +2,36 @@
 
 open FSharp
 open DiffSharp.AD
-open DiffSharp.AD.Float32
+open DiffSharp.AD.Float64
 
- let splitList divSize lst =
-        let rec splitAcc divSize cont = function
-            | [] -> cont([],[])
-            | l when divSize = 0 -> cont([], l)
-            | h::t -> splitAcc (divSize-1) (fun acc -> cont(h::fst acc, snd acc)) t
-        splitAcc divSize (fun x -> x) lst
+let mergesort (arr :DV)=     
+    let split (arr : D list) =
+        let n = arr.Length
+        arr.[0..n/2-1], arr.[n/2..n-1] 
 
-    // merge two sub-lists
-  let merge l r =
-        let rec mergeCont cont l r = 
-            match l, r with
-            | l, [] -> cont l
-            | [], r -> cont r
-            | hl::tl, hr::tr ->
-                if hl<hr then mergeCont (fun acc -> cont(hl::acc)) tl r
-                else mergeCont (fun acc -> cont(hr::acc)) l tr
-        mergeCont (fun x -> x) l r
+    let rec merge l r =   
+        match l, r with
+            | a :: ls, b :: rs ->
+                if a > b
+                then b :: merge l rs
+                else a :: merge ls r
+            | [], r -> r
+            | l, [] -> l 
+            
+    let rec mergeSort (arr :D list) =
+        if arr.Length < 2 then arr else       
+        let (x, y) = split arr
+        merge (mergeSort x) (mergeSort y) 
+        
+    let lst= arr.ToArray() |> Array.toList
+    mergeSort lst |> List.toArray |> toDV
 
-    // Sorting via merge
-   let mergeSort lst = 
-        let rec mergeSortCont lst cont =
-            match lst with
-            | [] -> cont([])
-            | [x] -> cont([x])
-            | l -> let left, right = splitList (l.Length/2) l
-                   mergeSortCont left  (fun accLeft ->
-                   mergeSortCont right (fun accRight -> cont(merge accLeft accRight)))
-        mergeSortCont lst (fun x -> x)
+let rnd=System.Random()
+let test= Array.init 5 (fun _-> rnd.NextDouble()) |> toDV
 
-    
-    let test=[|1.0f;4.0f;3.0f;2.0f;5.0f|]
+mergesort test
 
-     let mergesort_d(lst :DV)=
-        match lst with
-        |DV l->l |> Array.toList |> mergeSort |> List.toArray |> DV               
-        |_ -> lst
+let jacobianmergesort=jacobian mergesort
+jacobianmergesort test
 
-      let r=mergesort_d(DV test)
 
-       let mergesort_jacobian= jacobian mergesort_d
-        let r_jacobian=mergesort_jacobian(DV test)
