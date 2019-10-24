@@ -18,7 +18,7 @@ let mergesort (arr :DV)=
             | [], r -> r
             | l, [] -> l 
             
-    let rec mergeSort (arr :D list) =
+    let rec mergeSort (arr: D list) =
         if arr.Length < 2 then arr else       
         let (x, y) = split arr
         merge (mergeSort x) (mergeSort y) 

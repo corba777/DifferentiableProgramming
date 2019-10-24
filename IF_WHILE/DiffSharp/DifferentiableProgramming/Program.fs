@@ -8,7 +8,17 @@ open DiffSharp.AD.Float32
 
 
 [<EntryPoint>]
-let main argv = 
+let main argv =
+    let f (x :D)=
+        if(x=D 0.0f)
+            then -x 
+            else x   
+    
+ 
+    let ev=f(D.Zero) 
+    let df=diff f
+
+    
        
 
     let rec sum (x :D)=
